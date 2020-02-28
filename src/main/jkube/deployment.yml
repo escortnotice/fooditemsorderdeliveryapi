@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: ${project.artifactId}
+spec:
+  template:
+    spec:
+      containers:
+        - env:
+            - name: GREETINGS_MESSAGE
+              valueFrom:
+                 configMapKeyRef:
+                   name: health-config
+                   key: greetings.message          
+            - name: DB_USERNAME
+              valueFrom:
+                 secretKeyRef:
+                   name: my-database-secret
+                   key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                 secretKeyRef:
+                   name: my-database-secret
+                   key: password
+            - name: JAVA_OPTIONS
+              value: "-Dspring.profiles.active=openshift"
+            - name: MY_DATABASE_SERVICE_HOST
+              value: "mysql"
+            - name: MY_DATABASE_SERVICE_PORT
+              value: "3306"
+            - name: DATABASE
+              value: "pizzadb"        
+              livenessProbe:
+                httpGet:
+                  path: /actuator/health
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 180
+              readinessProbe:
+                httpGet:
+                  path: /actuator/health
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 30
+              resources:
+                limits:
+                  cpu: 1
+                  memory: 1Gi
+                requests:
+                  cpu: 500m
+                  memory: 500Mi
+          volumeMounts:
+          - name: application-config
+            mountPath: "/deployments/config"
+            readOnly: true     
+      volumes:
+      - name: application-config
+        configMap:
+          name: fooditemsorderdeliveryapi-props-configmap 
+          items:
+          - key: application.properties
+            path: application.properties

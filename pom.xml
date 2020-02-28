@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.4.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.fooditemsdelivery</groupId>
+	<artifactId>fooditemsorderdeliveryapi-exp</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>fooditemsorderdeliveryapi-exp</name>
+	<description>Spring Boot project for Food Items Order Delivery</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Swagger Dependency + UI for Rest Documentation -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- to create FAT executable jar -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- Included to run oc:watch goal -->
+				<configuration>
+					<excludeDevtools>false</excludeDevtools>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<!-- for activating local profile by default -->
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>local</spring.profiles.active>
+			</properties>
+		</profile>
+		<!-- for deployment to openshift -->
+		<profile>
+			<id>openshift</id>
+			<activation />			
+			<build>
+				<plugins>
+<!-- 					<plugin> -->
+<!-- 						<groupId>org.eclipse.jkube</groupId> -->
+<!-- 						<artifactId>k8s-maven-plugin</artifactId> -->
+<!-- 						<version>0.1.1</version> -->
+<!-- 						<executions> -->
+<!-- 							<execution> -->
+<!-- 								<id>jkube</id> -->
+<!-- 								<goals> -->
+<!-- 									<goal>resource</goal> -->
+<!-- 									<goal>build</goal> -->
+<!-- 								</goals> -->
+<!-- 							</execution> -->
+<!-- 						</executions> -->
+<!-- 					</plugin> -->
+					<plugin>
+						<groupId>org.eclipse.jkube</groupId>
+						<artifactId>oc-maven-plugin</artifactId>
+						<version>0.1.1</version>
+						<executions>
+							<execution>
+								<id>jkube</id>
+								<goals>
+									<goal>resource</goal>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+						<!--Explicitly provide a specific base image to be used, this will 
+							override the default docker image fabric8/s2i-java:2.3 -->
+						<!-- <configuration> -->
+						<!-- <generator> -->
+						<!-- <config> -->
+						<!-- <spring-boot> -->
+						<!-- <fromMode>isTag</fromMode> -->
+						<!-- <from>fabric8/s2i-java:3.0-java8</from> -->
+						<!-- <from>openjdk18-rhel7:1.1-7</from> -->
+						<!-- <from>redhat-openjdk18-openshift:1.1</from> -->
+						<!-- </spring-boot> -->
+						<!-- </config> -->
+						<!-- </generator> -->
+						<!-- </configuration> -->
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>
